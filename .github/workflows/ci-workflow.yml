@@ -23,8 +23,8 @@ jobs:
       fail-fast: true
       matrix:
         # our matrix for testing across node versions and OSs
-        node-version: [12, 14]
-        os: [windows-2019, ubuntu-20.04, ubuntu-22.04]
+        node-version: [12, 14, 16]
+        os: [macos-latest, windows-latest, ubuntu-latest]
     
     steps:
       - name: Checkout
@@ -44,6 +44,14 @@ jobs:
 
       # Add here the upload-artifact action
       
+      - shell: bash
+        run: |
+          echo 'Test upload artifact' > output.log
+      - name: Upload output file
+        uses: actions/upload-artifact@v2
+        with:
+          name: output-log-file
+          path: output.log
 
   # If both linting and CI succeeds we want to deploy the code to a test environment
   deploy-test:
@@ -56,6 +64,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Download a single artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: output-log-file
 
       # Add here the download-artifact step
       
